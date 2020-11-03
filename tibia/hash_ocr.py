@@ -1,8 +1,8 @@
-'''Main module'''
+'''Hash ocr for tibia'''
 import json
 
 import cv2
-
+import numpy as np
 from base.decorators import load_once
 from base.screen import crop
 from base.screen import get_hash
@@ -10,7 +10,7 @@ from base.screen import get_hash
 
 @load_once
 def _get_model():
-    with open('letters.json') as file_pointer:
+    with open('assets/json/letters.json') as file_pointer:
         letters = json.load(file_pointer)
         return {l['hash']: l['letter'] for l in letters}
 
@@ -54,24 +54,21 @@ def convert_line(image, debug=False):
     return line
 
 
-def main():
-    '''Main function'''
-    image = cv2.imread('test.png')
-    threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
-    print(convert_line(threshed))
-
-    image = cv2.imread('test1.png')
-    threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
-    print(convert_line(threshed))
-
-    image = cv2.imread('test2.png')
-    threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
-    print(convert_line(threshed))
-
-    image = cv2.imread('test3.png')
-    threshed = cv2.inRange(image, (0, 240, 240), (0, 240, 240))
-    print(convert_line(threshed))
-
-
-if __name__ == '__main__':
-    main()
+def convert_paragraph(image):
+    '''Ocr a paragraph'''
+    start = None
+    paragraph = []
+    for i, row in enumerate(image):
+        non_zero = np.count_nonzero(row)
+        if non_zero == 0 and start is not None:
+            line = image[start:i]
+            if line.shape[0] >= 6:
+                paragraph.append(convert_line(line))
+            start = None
+        if non_zero > 0 and start is None:
+            start = i
+    if start is not None:
+        line = image[start:]
+        if line.shape[0] >= 6:
+            paragraph.append(convert_line(line))
+    return '\n'.join(paragraph)

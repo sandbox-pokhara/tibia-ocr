@@ -11,7 +11,7 @@ letters = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
 
 def main(debug=False):
     '''Main function'''
-    image = cv2.imread('train.png')
+    image = cv2.imread('data/train.png')
     threshed = cv2.inRange(image, (244, 244, 244), (244, 244, 244))
     contours, _ = cv2.findContours(threshed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours.sort(key=lambda c: cv2.boundingRect(c)[0])
@@ -31,7 +31,7 @@ def main(debug=False):
             'width': bounding_rect[2],
             'height': bounding_rect[3],
         })
-    with open('letters.json', 'w') as file_pointer:
+    with open('assets/json/letters.json', 'w') as file_pointer:
         json.dump(model, file_pointer, indent=2)
 
 
