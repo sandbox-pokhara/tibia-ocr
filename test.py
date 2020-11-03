@@ -21,7 +21,9 @@ def convert_letter(image):
     _, width = image.shape[:2]
     if width == 0:
         return ''
-    for tentative_width in reversed(range(2, width+1)):
+    min_tentative_width = 2
+    max_tentative_width = min(10, width)
+    for tentative_width in reversed(range(min_tentative_width, max_tentative_width+1)):
         letter_image = image[:, :tentative_width]
         contours, _ = cv2.findContours(letter_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         if contours == []:
@@ -64,6 +66,10 @@ def main():
 
     image = cv2.imread('test2.png')
     threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
+    print(convert_line(threshed))
+
+    image = cv2.imread('test3.png')
+    threshed = cv2.inRange(image, (0, 240, 240), (0, 240, 240))
     print(convert_line(threshed))
 
 
