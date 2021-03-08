@@ -23,6 +23,10 @@ def main():
     threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
     print(convert_paragraph(threshed))
 
+    image = cv2.imread('data/test4.png')
+    threshed = cv2.inRange(image, (244, 244, 244), (244, 244, 244))
+    print(convert_paragraph(threshed))
+
 
 if __name__ == '__main__':
     main()

@@ -30,11 +30,14 @@ def convert_letter(image, debug=False):
         if contours == []:
             continue
         letter_image = crop(letter_image, cv2.boundingRect(contours[0]))
-        if debug:
-            cv2.imshow('', letter_image)
-            cv2.waitKey()
         letter_hash = get_hash(letter_image)
         letter = model.get(letter_hash, None)
+        if debug:
+            cv2.imshow('', letter_image)
+            cv2.setWindowTitle('', str(letter))
+            if letter is not None:
+                print(letter)
+            cv2.waitKey()
         if letter is not None:
             remaining_image = image[:, tentative_width:]
             return letter + convert_letter(remaining_image)
@@ -47,10 +50,20 @@ def convert_line(image, debug=False):
     contours.sort(key=lambda c: cv2.boundingRect(c)[0])
     line = ''
     for contour in contours:
+        # create a mask from the contour
+        mask = np.zeros_like(image)
+        cv2.drawContours(mask, [contour], 0, 255, -1)
+
+        # mask the original image
+        letter_image = cv2.bitwise_and(image, mask)
+
+        # crop the letter image and convert the image to character
         bounding_rect = cv2.boundingRect(contour)
-        letter_image = crop(image, bounding_rect)
+        letter_image = crop(letter_image, bounding_rect)
         letter = convert_letter(letter_image)
         line += letter
+
+        # debug
         if debug:
             cv2.imshow(letter, cv2.resize(letter_image, None, fx=30, fy=30, interpolation=0))
             cv2.waitKey()
