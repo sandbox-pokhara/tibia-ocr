@@ -3,6 +3,7 @@ import json
 
 import cv2
 import numpy as np
+
 from base.decorators import load_once
 from base.screen import crop
 from base.screen import get_hash
@@ -15,7 +16,7 @@ def _get_model():
         return {l['hash']: l['letter'] for l in letters}
 
 
-def convert_letter(image):
+def convert_letter(image, debug=False):
     '''Ocr a letter'''
     model = _get_model()
     _, width = image.shape[:2]
@@ -29,6 +30,9 @@ def convert_letter(image):
         if contours == []:
             continue
         letter_image = crop(letter_image, cv2.boundingRect(contours[0]))
+        if debug:
+            cv2.imshow('', letter_image)
+            cv2.waitKey()
         letter_hash = get_hash(letter_image)
         letter = model.get(letter_hash, None)
         if letter is not None:
