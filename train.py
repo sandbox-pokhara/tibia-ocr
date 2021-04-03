@@ -6,7 +6,7 @@ import cv2
 from base.screen import crop
 from base.screen import get_hash
 
-letters = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+letters = list('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567892')
 
 
 def main(debug=False):

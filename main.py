@@ -25,7 +25,11 @@ def main():
 
     image = cv2.imread('data/test4.png')
     threshed = cv2.inRange(image, (244, 244, 244), (244, 244, 244))
-    print(convert_paragraph(threshed))
+    print(convert_line(threshed))
+
+    image = cv2.imread('data/test5.png')
+    threshed = cv2.inRange(image, (191, 191, 191), (191, 191, 191))
+    print(convert_line(threshed))
 
 
 if __name__ == '__main__':
