@@ -1,12 +1,12 @@
-'''Decorator that make functions not be called faster than the rate'''
+"""Decorator that make functions not be called faster than the rate"""
 import os
 import threading
 import time
 from functools import wraps
 
-__all__ = ['rate_limit_persistent']
+__all__ = ["rate_limit_persistent"]
 
-DIR_PATH = 'helper/rate_limit_persistent'
+DIR_PATH = "helper/rate_limit_persistent"
 
 
 def _create_directories():
@@ -26,7 +26,7 @@ def _load_last_called(function_name):
 
 def _save_last_called(function_name, last_called):
     file_path = os.path.join(DIR_PATH, function_name)
-    with open(file_path, 'w') as file_pointer:
+    with open(file_path, "w") as file_pointer:
         file_pointer.write(str(last_called))
 
 
@@ -34,9 +34,9 @@ _create_directories()
 
 
 def rate_limit_persistent(min_interval):
-    '''
+    """
     Decorator that make functions not be called faster than the rate
-    '''
+    """
     lock = threading.Lock()
 
     def decorate(func):
@@ -58,6 +58,7 @@ def rate_limit_persistent(min_interval):
                 return run_func(args, kwargs)
             lock.release()
             return None
+
         return wrapped_function
 
     return decorate

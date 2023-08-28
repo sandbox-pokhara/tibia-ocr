@@ -1,4 +1,4 @@
-'''Base decorators'''
+"""Base decorators"""
 from ._rate_limit_persistent import *
 from .debounce.functions import debounce
 from .load_once.functions import load_once

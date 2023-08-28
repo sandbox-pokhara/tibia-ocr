@@ -1,9 +1,9 @@
-'''Module for storing output decorator'''
+"""Module for storing output decorator"""
 from functools import wraps
 
 
 def storeit(func):
-    '''Decorator to store latest output'''
+    """Decorator to store latest output"""
     output = None
 
     @wraps(func)

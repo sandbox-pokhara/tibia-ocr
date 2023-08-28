@@ -1,5 +1,3 @@
-
-
 registry = {}
 
 
@@ -13,5 +11,7 @@ def register(*args):
 
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)
+
         return wrapper
+
     return _register

@@ -1,4 +1,4 @@
-'''Hash ocr for tibia'''
+"""Hash ocr for tibia"""
 import json
 
 import cv2
@@ -11,44 +11,50 @@ from base.screen import get_hash
 
 @load_once
 def _get_model():
-    with open('assets/json/letters.json') as file_pointer:
+    with open("assets/json/letters.json") as file_pointer:
         letters = json.load(file_pointer)
-        return {l['hash']: l['letter'] for l in letters}
+        return {l["hash"]: l["letter"] for l in letters}
 
 
 def convert_letter(image, debug=False):
-    '''Ocr a letter'''
+    """Ocr a letter"""
     model = _get_model()
     _, width = image.shape[:2]
     if width == 0:
-        return ''
+        return ""
     min_tentative_width = 2
     max_tentative_width = min(10, width)
-    for tentative_width in reversed(range(min_tentative_width, max_tentative_width+1)):
+    for tentative_width in reversed(
+        range(min_tentative_width, max_tentative_width + 1)
+    ):
         letter_image = image[:, :tentative_width]
-        contours, _ = cv2.findContours(letter_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(
+            letter_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
         if contours == []:
             continue
         letter_image = crop(letter_image, cv2.boundingRect(contours[0]))
         letter_hash = get_hash(letter_image)
         letter = model.get(letter_hash, None)
         if debug:
-            cv2.imshow('', letter_image)
-            cv2.setWindowTitle('', str(letter))
+            cv2.imshow("", letter_image)
+            cv2.setWindowTitle("", str(letter))
             if letter is not None:
                 print(letter)
             cv2.waitKey()
         if letter is not None:
             remaining_image = image[:, tentative_width:]
             return letter + convert_letter(remaining_image)
-    return ''
+    return ""
 
 
 def convert_line(image, debug=False):
-    '''Ocr a line'''
-    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    """Ocr a line"""
+    contours, _ = cv2.findContours(
+        image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
     contours.sort(key=lambda c: cv2.boundingRect(c)[0])
-    line = ''
+    line = ""
     for contour in contours:
         # create a mask from the contour
         mask = np.zeros_like(image)
@@ -65,14 +71,17 @@ def convert_line(image, debug=False):
 
         # debug
         if debug:
-            cv2.imshow(letter, cv2.resize(letter_image, None, fx=30, fy=30, interpolation=0))
+            cv2.imshow(
+                letter,
+                cv2.resize(letter_image, None, fx=30, fy=30, interpolation=0),
+            )
             cv2.waitKey()
             cv2.destroyWindow(letter)
     return line
 
 
 def convert_paragraph(image):
-    '''Ocr a paragraph'''
+    """Ocr a paragraph"""
     start = None
     paragraph = []
     for i, row in enumerate(image):
@@ -88,4 +97,4 @@ def convert_paragraph(image):
         line = image[start:]
         if line.shape[0] >= 6:
             paragraph.append(convert_line(line))
-    return '\n'.join(paragraph)
+    return "\n".join(paragraph)

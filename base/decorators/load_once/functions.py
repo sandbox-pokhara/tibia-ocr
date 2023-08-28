@@ -1,13 +1,13 @@
-'''Loads a function only once'''
+"""Loads a function only once"""
 from functools import wraps
 
 
 def load_once(function):
-    '''
+    """
     Loads a function only once.
     Returns the same output after it has once once.
     The running can be reset by setting the `has_run` attribute to False
-    '''
+    """
     output = None
 
     @wraps(function)
