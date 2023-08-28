@@ -1,19 +1,26 @@
-"""Hash ocr for tibia"""
+import hashlib
 import json
+from functools import lru_cache
 
 import cv2
 import numpy as np
 
-from base.decorators import load_once
-from base.screen import crop
-from base.screen import get_hash
 
-
-@load_once
+@lru_cache()
 def _get_model():
     with open("assets/json/letters.json") as file_pointer:
         letters = json.load(file_pointer)
         return {l["hash"]: l["letter"] for l in letters}
+
+
+def crop(img, rect):
+    """Crops an cv2 image using coordinate and size"""
+    return img[rect[1] : rect[1] + rect[3], rect[0] : rect[0] + rect[2]]
+
+
+def get_hash(image):
+    """Returns the hash of the image"""
+    return hashlib.md5(image.tobytes()).hexdigest()
 
 
 def convert_letter(image, debug=False):
@@ -53,6 +60,7 @@ def convert_line(image, debug=False):
     contours, _ = cv2.findContours(
         image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
     )
+    contours = list(contours)
     contours.sort(key=lambda c: cv2.boundingRect(c)[0])
     line = ""
     for contour in contours:

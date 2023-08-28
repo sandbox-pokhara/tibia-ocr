@@ -1,8 +1,8 @@
 """Main module"""
 import cv2
 
-from tibia.hash_ocr import convert_line
-from tibia.hash_ocr import convert_paragraph
+from tibia_ocr.hash_ocr import convert_line
+from tibia_ocr.hash_ocr import convert_paragraph
 
 
 def main():

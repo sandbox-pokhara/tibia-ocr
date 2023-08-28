@@ -20,7 +20,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
     ],
     include_package_data=True,
-    package_dir={"tibia-ocr": "tibia-ocr"},
+    package_dir={"tibia_ocr": "tibia_ocr"},
     python_requires=">=3",
     install_requires=[],
 )
