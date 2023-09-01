@@ -13,14 +13,19 @@ pip install tibia-ocr
 ## Usage
 
 ```python
-import tibia-ocr
+import cv2
 
-# usage examples here
+from tibia_ocr.hash_ocr import convert_line
+
+image = cv2.imread("data/test.png")
+threshed = cv2.inRange(image, (192, 192, 192), (192, 192, 192))
+out = convert_line(threshed)
+print(out)
 ```
 
 ## Known Limitations
 
-- `!` is detected as `i`
+- `!` is detected as `i` in big font
 - Can not detect spaces
 
 ## License
