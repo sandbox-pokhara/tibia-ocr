@@ -13,7 +13,8 @@ from tibia_ocr.utils import get_hash
 @lru_cache()
 def get_model(font):
     try:
-        with open(os.path.join("assets", "json", font + ".json")) as fp:
+        dirname = os.path.dirname(__file__)
+        with open(os.path.join(dirname, "fonts", font + ".json")) as fp:
             letters = json.load(fp)
             return {l["hash"]: l for l in letters}
     except FileNotFoundError:

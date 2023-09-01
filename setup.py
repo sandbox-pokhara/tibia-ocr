@@ -22,5 +22,5 @@ setuptools.setup(
     include_package_data=True,
     package_dir={"tibia_ocr": "tibia_ocr"},
     python_requires=">=3",
-    install_requires=[],
+    install_requires=["opencv-python"],
 )
