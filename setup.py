@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="tibia-ocr",
-    version="1.0.3",
+    version="1.0.4",
     author="Pradish Bijukchhe",
     author_email="pradishbijukchhe@gmail.com",
     description="OCR to read Tibia in-game text written in python",
