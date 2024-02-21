@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 from cv2.typing import MatLike
 
-from tibia_ocr.constants import DEFAULT
+from tibia_ocr.constants import BIG_FONT
 from tibia_ocr.exceptions import FontNotFound
 from tibia_ocr.utils import crop
 from tibia_ocr.utils import get_hash
@@ -39,7 +39,7 @@ def get_min_height(font: Path | str):
 
 
 def convert_letter(
-    img: MatLike, font: Path | str = DEFAULT, debug: bool = False
+    img: MatLike, font: Path | str = BIG_FONT, debug: bool = False
 ) -> str:
     """Ocr a letter"""
     model_obj = get_model(font)
@@ -76,7 +76,7 @@ def convert_letter(
 
 
 def convert_line(
-    img: MatLike, font: Path | str = DEFAULT, debug: bool = False
+    img: MatLike, font: Path | str = BIG_FONT, debug: bool = False
 ):
     """Ocr a line"""
     contours, _ = cv2.findContours(
@@ -110,7 +110,7 @@ def convert_line(
     return line
 
 
-def convert_paragraph(img: MatLike, font: Path | str = DEFAULT):
+def convert_paragraph(img: MatLike, font: Path | str = BIG_FONT):
     """Ocr a paragraph"""
     start = None
     paragraph: list[str] = []
