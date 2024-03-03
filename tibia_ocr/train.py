@@ -1,5 +1,7 @@
 """Main module"""
 
+from __future__ import annotations
+
 import json
 import os
 from argparse import ArgumentParser
