@@ -31,9 +31,9 @@ def convert_red(img: MatLike, font: Path | str = BIG_FONT):
 
 
 def convert_paragraph_in_range(
-    img: MatLike, upper: MatLike, lower: MatLike, font: Path | str = BIG_FONT
+    img: MatLike, lower: MatLike, upper: MatLike, font: Path | str = BIG_FONT
 ):
-    img = cv2.inRange(img, upper, lower)
+    img = cv2.inRange(img, lower, upper)
     return convert_paragraph(img, font=font)
 
 
