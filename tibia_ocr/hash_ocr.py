@@ -44,16 +44,19 @@ def convert_letter(
     img: MatLike, font: Path | str = BIG_FONT, debug: bool = False
 ) -> str:
     """Ocr a letter"""
+
     model_obj = get_model(font)
+
     _, width = img.shape[:2]
-    letters: str = ""
     if width == 0:
         return ""
+
     contours, _ = cv2.findContours(
         img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
     )
     if contours == []:
         return ""
+
     x, y, w, h = cv2.boundingRect(contours[0])
     letter_image = crop(img, (x, y, w, h))
     letter_hash = get_hash(letter_image)
@@ -66,8 +69,8 @@ def convert_letter(
         cv2.waitKey()
         cv2.destroyWindow("")
     if letter:
-        letters += letter["letter"]
-    return letters
+        return letter["letter"]
+    return ""
 
 
 def convert_line(
