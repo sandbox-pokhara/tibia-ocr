@@ -46,35 +46,28 @@ def convert_letter(
     """Ocr a letter"""
     model_obj = get_model(font)
     _, width = img.shape[:2]
+    letters: str = ""
     if width == 0:
         return ""
-    min_tentative_width = get_min_width(font)
-    max_tentative_width = min(10, width)
-    for tentative_width in reversed(
-        range(min_tentative_width, max_tentative_width + 1)
-    ):
-        letter_image: MatLike = img[:, :tentative_width]
-        contours, _ = cv2.findContours(
-            letter_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-        )
-        if contours == []:
-            continue
-        x, y, w, h = cv2.boundingRect(contours[0])
-        letter_image = crop(letter_image, (x, y, w, h))
-        letter_hash = get_hash(letter_image)
-        letter = model_obj.get(letter_hash, None)
-        if debug:
-            cv2.imshow("", letter_image)
-            cv2.setWindowTitle("", str(letter))
-            if letter is not None:
-                print(letter["letter"])
-            cv2.waitKey()
-            cv2.destroyWindow("")
+    contours, _ = cv2.findContours(
+        img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+    if contours == []:
+        return ""
+    x, y, w, h = cv2.boundingRect(contours[0])
+    letter_image = crop(img, (x, y, w, h))
+    letter_hash = get_hash(letter_image)
+    letter = model_obj.get(letter_hash, None)
+    if debug:
+        cv2.imshow("", letter_image)
+        cv2.setWindowTitle("", str(letter))
         if letter is not None:
-            remaining_image: MatLike = img[:, tentative_width:]
-            letter = letter["letter"]
-            return letter + convert_letter(remaining_image, font=font)
-    return ""
+            print(letter["letter"])
+        cv2.waitKey()
+        cv2.destroyWindow("")
+    if letter:
+        letters += letter["letter"]
+    return letters
 
 
 def convert_line(
