@@ -41,7 +41,6 @@ def get_min_height(font: Path | str):
 
 
 def convert_letter(img: MatLike, font: Path | str = BIG_FONT) -> str:
-    """Ocr a letter"""
     model_obj = get_model(font)
     _, width = img.shape[:2]
     if width == 0:
@@ -68,32 +67,32 @@ def convert_letter(img: MatLike, font: Path | str = BIG_FONT) -> str:
     return ""
 
 
-def convert_line(img: MatLike, font: Path | str = BIG_FONT):
-    """Ocr a line"""
-    contours, _ = cv2.findContours(
-        img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-    )
-    contours = list(contours)
-    contours.sort(key=lambda c: cv2.boundingRect(c)[0])
-    line = ""
-    for contour in contours:
+def convert_line_with_locations(img: MatLike, font: Path | str = BIG_FONT):
+    cnts, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    letters: list[tuple[tuple[int, int, int, int], str]] = []
+    for cnt in cnts:
         # create a mask from the contour
-        mask = np.zeros_like(img)
-        cv2.drawContours(mask, [contour], 0, [255], -1)
+        mask: MatLike = np.zeros_like(img)
+        cv2.drawContours(mask, [cnt], 0, [255], -1)
 
         # mask the original image
         letter_image = cv2.bitwise_and(img, mask)
 
         # crop the letter image and convert the image to character
-        x, y, w, h = cv2.boundingRect(contour)
+        x, y, w, h = cv2.boundingRect(cnt)
         letter_image = crop(letter_image, (x, y, w, h))
         letter = convert_letter(letter_image, font=font)
-        line += letter
-    return line
+        letters.append(((x, y, w, h), letter))
+    return letters
+
+
+def convert_line(img: MatLike, font: Path | str = BIG_FONT):
+    letters = convert_line_with_locations(img, font)
+    letters.sort(key=lambda l: l[0][0])
+    return "".join([l[1] for l in letters])
 
 
 def convert_paragraph(img: MatLike, font: Path | str = BIG_FONT):
-    """Ocr a paragraph"""
     start = None
     paragraph: list[str] = []
     for i, row in enumerate(img):
