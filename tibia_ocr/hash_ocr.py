@@ -40,9 +40,7 @@ def get_min_height(font: Path | str):
     return min_height
 
 
-def convert_letter(
-    img: MatLike, font: Path | str = BIG_FONT, debug: bool = False
-) -> str:
+def convert_letter(img: MatLike, font: Path | str = BIG_FONT) -> str:
     """Ocr a letter"""
     model_obj = get_model(font)
     _, width = img.shape[:2]
@@ -63,13 +61,6 @@ def convert_letter(
         letter_image = crop(letter_image, (x, y, w, h))
         letter_hash = get_hash(letter_image)
         letter = model_obj.get(letter_hash, None)
-        if debug:
-            cv2.imshow("", letter_image)
-            cv2.setWindowTitle("", str(letter))
-            if letter is not None:
-                print(letter["letter"])
-            cv2.waitKey()
-            cv2.destroyWindow("")
         if letter is not None:
             remaining_image: MatLike = img[:, tentative_width:]
             letter = letter["letter"]
@@ -77,9 +68,7 @@ def convert_letter(
     return ""
 
 
-def convert_line(
-    img: MatLike, font: Path | str = BIG_FONT, debug: bool = False
-):
+def convert_line(img: MatLike, font: Path | str = BIG_FONT):
     """Ocr a line"""
     contours, _ = cv2.findContours(
         img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
@@ -100,15 +89,6 @@ def convert_line(
         letter_image = crop(letter_image, (x, y, w, h))
         letter = convert_letter(letter_image, font=font)
         line += letter
-
-        # debug
-        if debug:
-            cv2.imshow(
-                letter,
-                cv2.resize(letter_image, None, fx=30, fy=30, interpolation=0),
-            )
-            cv2.waitKey()
-            cv2.destroyWindow(letter)
     return line
 
 
